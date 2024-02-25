@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, first_name, last_name, username } =
       evt.data;
 
-    const user = {
+    const user: CreateUserParams = {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username!,
