@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,11 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AspectRatioOptionsKeys } from "@/lib/utils";
+import {
+  AspectRatioOptionsKeys,
+  debounce,
+  deepMergeObjects,
+} from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export const formSchema = z.object({
-  title: z.string(),
+  title: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
   aspectRatio: z.string().optional(),
   color: z.string().optional(),
   prompt: z.string().optional(),
@@ -43,6 +49,7 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
+  const [isPending, startTransition] = useTransition();
 
   const initialFormValues =
     data && action === "Update"
@@ -95,11 +102,29 @@ const TransformationForm = ({
     type: string,
     onChangeField: (value: string) => void
   ) => {
-    onChangeField(value);
+    debounce(() => {
+      setNewTransformation((prev: any) => ({
+        ...prev,
+        [type]: {
+          ...prev?.[type],
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
+        },
+      }));
+    }, 1000);
+
+    return onChangeField(value);
   };
 
   // transform image click handler
-  const onTransformHandler = () => {};
+  const onTransformHandler = () => {
+    setIsTransforming(true);
+
+    setTransformationConfig(
+      deepMergeObjects(newTransformation, transformationConfig)
+    );
+
+    setNewTransformation(null);
+  };
 
   return (
     <Form {...form}>
