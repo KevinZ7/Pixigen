@@ -24,6 +24,7 @@ import {
   deepMergeObjects,
 } from "@/lib/utils";
 import { Button } from "../ui/button";
+import MediaUploader from "./MediaUploader";
 
 export const formSchema = z.object({
   title: z.string().min(2, {
@@ -124,6 +125,8 @@ const TransformationForm = ({
     );
 
     setNewTransformation(null);
+
+    //to-do update credits
   };
 
   return (
@@ -213,6 +216,23 @@ const TransformationForm = ({
             )}
           </div>
         )}
+
+        <div className="media-uploader-field">
+          <CustomFormField
+            control={form.control}
+            name="publicId"
+            className="flex size-full flex-col"
+            render={({ field }) => (
+              <MediaUploader
+                onValueChange={field.onChange}
+                setImage={setImage}
+                publicId={field.value}
+                image={image}
+                type={type}
+              />
+            )}
+          />
+        </div>
 
         <div className="flex flex-col gap-4">
           <Button
