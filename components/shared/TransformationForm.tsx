@@ -56,7 +56,7 @@ const TransformationForm = ({
     data && action === "Update"
       ? {
           title: data?.title,
-          aspectRatio: data?.aspectRatio,
+          aspectRatio: data?.aspectRation,
           color: data?.color,
           prompt: data?.prompt,
           publicId: data?.publicId,
