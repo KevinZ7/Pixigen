@@ -7,6 +7,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   aspectRatioOptions,
+  creditFee,
   defaultValues,
   transformationTypes,
 } from "@/constants";
@@ -25,6 +26,8 @@ import {
 } from "@/lib/utils";
 import { Button } from "../ui/button";
 import MediaUploader from "./MediaUploader";
+import TransformedImage from "./TransformedImage";
+import { updateCredits } from "@/lib/actions/user.actions";
 
 export const formSchema = z.object({
   title: z.string().min(2, {
@@ -111,7 +114,7 @@ const TransformationForm = ({
           [fieldName === "prompt" ? "prompt" : "to"]: value,
         },
       }));
-    }, 1000);
+    }, 1000)();
 
     return onChangeField(value);
   };
@@ -127,6 +130,9 @@ const TransformationForm = ({
     setNewTransformation(null);
 
     //to-do update credits
+    startTransition(async () => {
+      await updateCredits(userId, creditFee);
+    });
   };
 
   return (
@@ -231,6 +237,15 @@ const TransformationForm = ({
                 type={type}
               />
             )}
+          />
+
+          <TransformedImage
+            image={image}
+            type={type}
+            title={form.getValues().title}
+            isTransforming={isTransforming}
+            setIsTransforming={setIsTransforming}
+            transformationConfig={transformationConfig}
           />
         </div>
 

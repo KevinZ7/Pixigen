@@ -23,7 +23,6 @@ const MediaUploader = ({
   type,
 }: MediaUploadProps) => {
   const { toast } = useToast();
-  console.log(`publicId is: ${publicId}`);
 
   const onUploadSuccessHandler = (result: any) => {
     setImage((prevState: any) => ({
